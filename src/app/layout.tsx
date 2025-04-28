@@ -1,5 +1,7 @@
 import StyledComponentsRegistry from '@/lib/SSRStyledComponents';
 import type { Metadata } from 'next';
+import { Providers } from './provider';
+import { GlobalStyles } from '@/styles/global';
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -14,7 +16,12 @@ export default function RootLayout({
 	return (
 		<html lang="ru">
 			<body>
-				<StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+				<Providers>
+					<StyledComponentsRegistry>
+						<GlobalStyles />
+						{children}
+					</StyledComponentsRegistry>
+				</Providers>
 			</body>
 		</html>
 	);
