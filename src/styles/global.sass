@@ -1,0 +1,30 @@
+@use 'variables' as v
+*
+    padding: 0
+    margin: 0
+    outline: none
+    border: none
+    font-family: monospace
+    font-weight: 500
+    color: v.$color-color-text-primary
+    font-size: 1rem
+
+html
+    scroll-behavior: smooth
+    background: v.$color-color-bg-default
+
+    body
+        display: flex
+        flex-direction: column
+        align-items: stretch
+        height: 100vh
+        main
+            display: flex
+            flex-direction: column
+            align-items: flex-start
+            justify-content: flex-start
+            height: 100%
+            padding: 5%
+
+button, a
+    cursor: pointer

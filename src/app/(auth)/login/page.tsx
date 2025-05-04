@@ -1,54 +1,49 @@
 'use client';
 
+import { ProfileStore } from '@/stores/profile/store';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import styled from 'styled-components';
 
-const DivLogin = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	height: 100%;
-	gap: 32px;
-`;
+import styles from './page.module.sass';
+import { OAuthProviderType } from 'next-auth/providers/oauth-types';
 
-const Btn = styled.button`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 12px;
-	border-radius: 12px;
-	width: 50%;
-	cursor: pointer;
-	background: black;
-	color: white;
-	transition: 0.4s;
-	&:hover {
-		opacity: 0.6;
-	}
-`;
-
-const onAuth = () => {
-	signIn('google', { callbackUrl: '/' });
+const onAuth = (provider: OAuthProviderType) => {
+	signIn(provider, { callbackUrl: '/login' });
 };
 
 const onLeave = () => {
-	signOut({ redirect: true, callbackUrl: '/' });
+	signOut({ redirect: true, callbackUrl: '/login' });
 };
 
 export default function Login() {
+	const profile = ProfileStore.getProfile;
 	const session = useSession();
-	console.log(session);
-
+	ProfileStore.setProfile(session);
 	return (
-		<DivLogin>
-			<h1></h1>
-			<p></p>
-			<Btn onClick={onAuth}>
-				<p>Google</p>
-			</Btn>
-			<Btn onClick={onLeave}>
-				<p>Выйти</p>
-			</Btn>
-		</DivLogin>
+		<div className={styles.login}>
+			<p>{profile.name}</p>
+			<p>{profile.email}</p>
+			{profile.email !== null ? (
+				<button onClick={onLeave}>
+					<p>Выйти</p>
+				</button>
+			) : (
+				<>
+					<button
+						onClick={() => {
+							onAuth('google');
+						}}
+					>
+						<p>Авторизация с помощью Google</p>
+					</button>
+					<button
+						onClick={() => {
+							onAuth('yandex');
+						}}
+					>
+						<p>Авторизация с помощью Yandex</p>
+					</button>
+				</>
+			)}
+		</div>
 	);
 }
