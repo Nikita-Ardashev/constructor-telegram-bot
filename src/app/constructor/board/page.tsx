@@ -1,72 +1,67 @@
 'use client';
 
 import {
-	addEdge,
-	applyEdgeChanges,
-	applyNodeChanges,
 	Background,
 	Connection,
 	Controls,
-	Edge,
 	EdgeChange,
-	Node,
 	NodeChange,
 	ReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import styles from './page.module.sass';
-import { useState, useCallback } from 'react';
+import { useCallback, memo } from 'react';
+import { BoardStore, ConstructorTemporaryStore } from '@/stores/constructor/store';
+import { observer } from 'mobx-react-lite';
+import { useHotkeys } from 'react-hotkeys-hook';
 
-const initialNodes: Node[] = [
-	{
-		id: '1',
-		position: { x: 0, y: 0 },
-		data: { label: 'Hello' },
-		type: 'input',
-	},
-	{
-		id: '2',
-		position: { x: 100, y: 100 },
-		data: { label: 'World' },
-	},
-];
+export default memo(
+	observer(function Board() {
+		const initialNodes = BoardStore.getNodesArray;
+		const initialEdges = BoardStore.getEdgesArray;
 
-const initialEdges: Edge[] = [
-	{ id: '1-2', source: '1', target: '2', label: 'to the', type: 'step' },
-];
+		const onNodesChange = useCallback(
+			(changes: NodeChange[]) => BoardStore.updateNodes(changes),
+			[],
+		);
+		const onEdgesChange = useCallback(
+			(changes: EdgeChange[]) => BoardStore.updateEdges(changes),
+			[],
+		);
+		const onConnect = useCallback(
+			(params: Connection) => BoardStore.addConnect(params),
+			[],
+		);
 
-const Board = () => {
-	const [nodes, setNodes] = useState(initialNodes);
-	const [edges, setEdges] = useState(initialEdges);
+		const undo = useCallback((e: KeyboardEvent) => {
+			ConstructorTemporaryStore.addNode('chat', '1234');
+		}, []);
+		const redo = useCallback((e: KeyboardEvent) => {
+			ConstructorTemporaryStore.removeNode('chat');
+		}, []);
 
-	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-		[],
-	);
-	const onEdgesChange = useCallback(
-		(changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-		[],
-	);
+		useHotkeys('ctrl+z, cmd+z', undo, { preventDefault: true });
+		useHotkeys('ctrl+shift+z, cmd+shift+z', redo, { preventDefault: true });
 
-	const onConnect = useCallback(
-		(params: Connection) => setEdges((eds) => addEdge(params, eds)),
-		[],
-	);
-	return (
-		<div className={styles.board}>
-			<ReactFlow
-				nodes={nodes}
-				onNodesChange={onNodesChange}
-				edges={edges}
-				onEdgesChange={onEdgesChange}
-				onConnect={onConnect}
-				fitView
-			>
-				<Background bgColor="white" />
-				<Controls />
-			</ReactFlow>
-		</div>
-	);
-};
-
-export default Board;
+		return (
+			<div className={styles.board}>
+				<ReactFlow
+					nodes={initialNodes}
+					onNodesChange={onNodesChange}
+					edges={initialEdges}
+					onEdgesChange={onEdgesChange}
+					onConnect={onConnect}
+					fitView
+					deleteKeyCode={null}
+					selectionKeyCode={null}
+					multiSelectionKeyCode={null}
+				>
+					<Background bgColor="white" />
+					<Controls>
+						<button>t</button>
+					</Controls>
+				</ReactFlow>
+			</div>
+		);
+	}),
+);
