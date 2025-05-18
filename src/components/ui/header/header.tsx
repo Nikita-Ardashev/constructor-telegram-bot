@@ -1,5 +1,5 @@
 import { Links } from '@/utils/getRoutes';
-import styles from '@styles/components/header.module.sass';
+import styles from './header.module.sass';
 
 export default function Header() {
 	return (

@@ -1,6 +1,6 @@
 'use client';
 
-import DefaultField from '@/components/defaultFields/defaultField';
+import DefaultField from '@/components/ui/defaultFields/defaultField';
 import { REGEX_TELEGRAM_BOT_API_KEY } from '@/constants/regex';
 import React, { useState } from 'react';
 import { z } from 'zod';

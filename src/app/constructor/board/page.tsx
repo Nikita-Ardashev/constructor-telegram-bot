@@ -1,56 +1,46 @@
 'use client';
 
-import {
-	Background,
-	Connection,
-	Controls,
-	EdgeChange,
-	NodeChange,
-	ReactFlow,
-} from '@xyflow/react';
+import { Background, Controls, Edge, Node, ReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import styles from './page.module.sass';
-import { useCallback, memo } from 'react';
-import { BoardStore, ConstructorTemporaryStore } from '@/stores/constructor/store';
+import { memo } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useHotkeys } from 'react-hotkeys-hook';
 
+const initialNodes: Node[] = [
+	{
+		id: '1',
+		position: { x: 0, y: 0 },
+		data: { label: 'Hello' },
+		type: 'input',
+	},
+	{
+		id: '2',
+		position: { x: 200, y: 100 },
+		data: { label: '1' },
+	},
+	{
+		id: '3',
+		position: { x: 0, y: 100 },
+		data: { label: '2' },
+	},
+	{
+		id: '4',
+		position: { x: -200, y: 100 },
+		data: { label: '3' },
+	},
+];
+const initialEdges: Edge[] = [
+	{ id: '1-2', source: '1', target: '2', label: 'step 1', type: 'step' },
+	{ id: '1-3', source: '1', target: '3', label: 'step 2', type: 'step' },
+	{ id: '1-4', source: '1', target: '4', label: 'step 3', type: 'step' },
+];
 export default memo(
 	observer(function Board() {
-		const initialNodes = BoardStore.getNodesArray;
-		const initialEdges = BoardStore.getEdgesArray;
-
-		const onNodesChange = useCallback(
-			(changes: NodeChange[]) => BoardStore.updateNodes(changes),
-			[],
-		);
-		const onEdgesChange = useCallback(
-			(changes: EdgeChange[]) => BoardStore.updateEdges(changes),
-			[],
-		);
-		const onConnect = useCallback(
-			(params: Connection) => BoardStore.addConnect(params),
-			[],
-		);
-
-		const undo = useCallback((e: KeyboardEvent) => {
-			ConstructorTemporaryStore.addNode('chat', '1234');
-		}, []);
-		const redo = useCallback((e: KeyboardEvent) => {
-			ConstructorTemporaryStore.removeNode('chat');
-		}, []);
-
-		useHotkeys('ctrl+z, cmd+z', undo, { preventDefault: true });
-		useHotkeys('ctrl+shift+z, cmd+shift+z', redo, { preventDefault: true });
-
 		return (
 			<div className={styles.board}>
 				<ReactFlow
 					nodes={initialNodes}
-					onNodesChange={onNodesChange}
 					edges={initialEdges}
-					onEdgesChange={onEdgesChange}
-					onConnect={onConnect}
 					fitView
 					deleteKeyCode={null}
 					selectionKeyCode={null}

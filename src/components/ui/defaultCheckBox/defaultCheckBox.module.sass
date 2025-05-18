@@ -1,0 +1,30 @@
+@use 'variables' as v
+
+.default_checkbox
+    display: flex
+    flex-direction: row
+    align-items: center
+    gap: 10px
+    min-height: 16px
+    color: v.$color-color-text-primary
+    > button
+        &:first-child
+            height: 16px
+            width: 16px
+            display: flex
+            height: 100%
+            aspect-ratio: 1
+            border: 1px solid v.$color-color-text-primary
+            border-radius: 4px
+            div
+                display: flex
+                svg, path
+                    fill: v.$color-color-text-primary
+                    fill-rule: v.$color-color-text-primary
+                    width: 16px
+                    height: 16px
+    > p
+        font-weight: 400
+        font-size: 16px
+        line-height: 19px
+        letter-spacing: -0.3px
